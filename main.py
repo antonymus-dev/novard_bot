@@ -10,7 +10,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
-TOKEN = ""
+TOKEN = "7982478031:AAHDwNmUIBZp_0LKrlS6cyu6BBdgpAtKc6k"
 ADMIN_ID = 1642890158
 
 bot = Bot(token=TOKEN)
