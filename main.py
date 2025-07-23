@@ -129,7 +129,9 @@ async def open_module(callback: CallbackQuery, state: FSMContext):
     #await callback.message.answer_document(file, caption="📄 Домашнее задание")
     #await callback.message.answer("⬇️ Выберите действие:", reply_markup=module_actions_keyboard(index))
     #await state.set_state(CourseStates.in_module)
-    await callback.message.answer("Скоро здесь появится видеозапись вебинара.")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
+    await callback.message.answer("Скоро здесь появится видеозапись вебинара.", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data.startswith("submit_hw_"))
 async def submit_homework(callback: CallbackQuery):
@@ -167,7 +169,8 @@ async def materials(callback: CallbackQuery):
 async def docs_module(callback: CallbackQuery):
     index = int(callback.data.split("_")[1])
     file = FSInputFile(MODULES[index]["file"])
-    await callback.message.answer_document(file, caption=f"📂 Материалы для {MODULES[index]['title']}")
+    #await callback.message.answer_document(file, caption=f"📂 Материалы для {MODULES[index]['title']}")
+    await callback.message.answer("Скоро здесь появятся материалы этого вебинара.")
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
     await callback.message.answer("Вернуться в главное меню:", reply_markup=kb.as_markup())
