@@ -13,6 +13,11 @@ from aiogram.fsm.state import StatesGroup, State
 TOKEN = "7982478031:AAHDwNmUIBZp_0LKrlS6cyu6BBdgpAtKc6k"
 ADMIN_ID = 1642890158
 
+def back_button():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="⬅️ Назад", callback_data="go_back")
+    return builder.as_markup()
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
@@ -65,6 +70,7 @@ conn.commit()
 
 # --- Модули курса ---
 MODULES = [
+    {"title": "Вебинар 1: Введение", "video": "https://example.com/webinar2", "file": "files/webinar2.pdf"},
     {"title": "Вебинар 2: Промптинг", "video": "https://example.com/webinar2", "file": "files/webinar2.pdf"},
     {"title": "Вебинар 3: Визуализация", "video": "https://example.com/webinar3", "file": "files/webinar3.pdf"},
     {"title": "Вебинар 4: Автоматизация", "video": "https://example.com/webinar4", "file": "files/webinar4.pdf"},
@@ -89,6 +95,7 @@ def modules_keyboard(prefix="module"):
     for i, m in enumerate(MODULES):
         kb.button(text=m["title"], callback_data=f"{prefix}_{i}")
     kb.adjust(1)
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     return kb.as_markup()
 
 def module_actions_keyboard(index: int):
@@ -258,6 +265,11 @@ async def broadcast_send(message: Message, state: FSMContext):
             pass
     await message.answer(f"Рассылка завершена. Отправлено {sent} сообщений.")
     await state.clear()
+    
+@dp.callback_query(F.data == "go_back")
+async def go_back(callback: CallbackQuery, state: FSMContext):
+    await cmd_start(callback.message)
+
 # --- Запуск ---
 async def main():
     await dp.start_polling(bot)
