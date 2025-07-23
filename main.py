@@ -152,8 +152,8 @@ async def complete_module(callback: CallbackQuery):
 @dp.callback_query(F.data == "my_progress")
 async def show_progress(callback: CallbackQuery):
     user_id = callback.from_user.id
-    cursor.execute("SELECT m0, m1, m2, m3 FROM progress WHERE user_id = ?", (user_id,))
-    result = cursor.fetchone() or (0, 0, 0, 0)
+    cursor.execute("SELECT m0, m1, m2, m3, m4 FROM progress WHERE user_id = ?", (user_id,))
+    result = cursor.fetchone() or (0, 0, 0, 0, 0)
     progress = "\n".join(
         f"{'✅' if done else '❌'} {MODULES[i]['title']}" for i, done in enumerate(result)
     )
