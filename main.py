@@ -102,6 +102,7 @@ def module_actions_keyboard(index: int):
     kb = InlineKeyboardBuilder()
     kb.button(text="📤 Отправить домашнее задание", callback_data=f"submit_hw_{index}")
     kb.button(text="✅ Пройден!", callback_data=f"complete_{index}")
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     return kb.as_markup()
 
 # --- Хендлеры ---
@@ -166,11 +167,14 @@ async def ask_question(callback: CallbackQuery):
     kb = InlineKeyboardBuilder()
     kb.button(text="📢 Общий чат", url="https://t.me/+Bgj6eTVC5QwxOTRi")
     kb.button(text="👤 Личное сообщение", url="https://t.me/vorobidze")
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     kb.adjust(1)
     await callback.message.answer("Выберите способ связи:", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data == "faq")
 async def faq(callback: CallbackQuery):
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     await callback.message.answer("❓ Частые вопросы:\n1. Где материалы?\n2. Как получить сертификат?\n3. Куда писать вопросы?")
 
 @dp.callback_query(F.data == "certificate")
@@ -178,6 +182,8 @@ async def certificate(callback: CallbackQuery):
     user_id = callback.from_user.id
     cursor.execute("SELECT m0, m1, m2, m3 FROM progress WHERE user_id = ?", (user_id,))
     modules = cursor.fetchone() or (0, 0, 0, 0)
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     if all(modules):
         await callback.message.answer("📜 Поздравляем! Вы прошли курс. Мы отправим сертификат на вашу почту.")
     else:
@@ -186,6 +192,8 @@ async def certificate(callback: CallbackQuery):
 
 @dp.callback_query(F.data == "feedback")
 async def feedback(callback: CallbackQuery, state: FSMContext):
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     await callback.message.answer("✍️ Напишите свой отзыв — одним сообщением.")
     await state.set_state(CourseStates.writing_feedback)
 
@@ -194,6 +202,8 @@ async def save_feedback(message: Message, state: FSMContext):
     cursor.execute("INSERT INTO feedback (user_id, username, feedback, submitted_at) VALUES (?, ?, ?, ?)",
                    (message.from_user.id, message.from_user.username or "", message.text, datetime.now().isoformat()))
     conn.commit()
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
     await bot.send_message(ADMIN_ID, f"📩 Новый отзыв от @{message.from_user.username}:\n{message.text}")
     await message.answer("Спасибо за ваш отзыв! ❤️")
     await state.clear()
@@ -265,7 +275,7 @@ async def broadcast_send(message: Message, state: FSMContext):
             pass
     await message.answer(f"Рассылка завершена. Отправлено {sent} сообщений.")
     await state.clear()
-    
+
 @dp.callback_query(F.data == "go_back")
 async def go_back(callback: CallbackQuery, state: FSMContext):
     await cmd_start(callback.message)
