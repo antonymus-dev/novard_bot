@@ -167,6 +167,9 @@ async def docs_module(callback: CallbackQuery):
     index = int(callback.data.split("_")[1])
     file = FSInputFile(MODULES[index]["file"])
     await callback.message.answer_document(file, caption=f"📂 Материалы для {MODULES[index]['title']}")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
+    await callback.message.answer("Вернуться в главное меню:", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data == "ask_question")
 async def ask_question(callback: CallbackQuery):
@@ -195,11 +198,15 @@ async def certificate(callback: CallbackQuery):
     kb.button(text="⬅️ Назад", callback_data="go_back")
     if all(modules):
         await callback.message.answer(
-        "📜 Поздравляем! Вы прошли курс. Мы отправим сертификат на вашу почту."),
-        reply_markup=kb.as_markup()
+            "📜 Поздравляем! Вы прошли курс. Мы отправим сертификат на вашу почту.",
+            reply_markup=kb.as_markup()
+        )
     else:
         left = "\n".join(f"{MODULES[i]['title']}" for i, m in enumerate(modules) if not m)
-        await callback.message.answer(f"❗ Чтобы получить сертификат, нужно пройти все модули.\nОсталось:\n{left}")
+        await callback.message.answer(
+            f"❗ Чтобы получить сертификат, нужно пройти все модули.\nОсталось:\n{left}",
+            reply_markup=kb.as_markup()
+        )
 
 @dp.callback_query(F.data == "feedback")
 async def feedback(callback: CallbackQuery, state: FSMContext):
