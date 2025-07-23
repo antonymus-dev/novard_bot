@@ -78,6 +78,12 @@ MODULES = [
 ]
 
 # --- Кнопки ---
+def start_button():
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Начать", callback_data="start_course_menu")
+    kb.adjust(1)
+    return kb.as_markup()
+
 def main_menu():
     kb = InlineKeyboardBuilder()
     kb.button(text="🔹 Пройти курс", callback_data="start_course")
@@ -107,20 +113,21 @@ def module_actions_keyboard(index: int):
     return kb.as_markup()
 
 # --- Хендлеры ---
-@dp.message(F.text.lower().in_({"/start", "привет"}))
-async def cmd_start(message: Message):
+@dp.message(F.text.lower() == "/start")
+async def welcome_message(message: Message):
     add_user(message.chat.id)
     cursor.execute("INSERT OR IGNORE INTO progress (user_id) VALUES (?)", (message.from_user.id,))
     conn.commit()
+
     await message.answer(
         "👋 Добро пожаловать в обучающий бот по нейросетям!\n\n"
         "Здесь вы сможете:\n"
-        "- Смотреть записи вебинаров и скачивать материалы\n"
+        "- Смотреть записи вебинаров и материалы\n"
         "- Выполнять домашние задания и отслеживать прогресс\n"
-        "- Получить сертификат после прохождения курса\n"
-        "- Задавать вопросы и оставлять отзывы\n\n"
-        "Нажмите кнопку ниже, чтобы начать обучение!",
-        reply_markup=main_menu()
+        "- Получить сертификат после прохождения курса\n\n"
+        "Нажмите кнопку *Начать*, чтобы перейти в меню.",
+        reply_markup=start_button(),
+        parse_mode="Markdown"
     )
 
 @dp.callback_query(F.data == "start_course")
@@ -390,9 +397,15 @@ async def broadcast_send(message: Message, state: FSMContext):
     await message.answer(f"Рассылка завершена. Отправлено {sent} сообщений.")
     await state.clear()
 
+@dp.callback_query(F.data == "start_course_menu")
+async def open_main_menu(callback: CallbackQuery):
+    await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+
 @dp.callback_query(F.data == "go_back")
 async def go_back(callback: CallbackQuery, state: FSMContext):
-    await cmd_start(callback.message)
+    await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+    
+    
 
 # --- Запуск ---
 async def main():
