@@ -70,11 +70,11 @@ conn.commit()
 
 # --- Модули курса ---
 MODULES = [
-    {"title": "Вебинар 1: Введение", "video": "https://example.com/webinar2", "file": "files/webinar2.pdf"},
-    {"title": "Вебинар 2: Промптинг", "video": "https://example.com/webinar2", "file": "files/webinar2.pdf"},
-    {"title": "Вебинар 3: Визуализация", "video": "https://example.com/webinar3", "file": "files/webinar3.pdf"},
-    {"title": "Вебинар 4: Автоматизация", "video": "https://example.com/webinar4", "file": "files/webinar4.pdf"},
-    {"title": "Вебинар 5: Продвинутые техники", "video": "https://example.com/webinar5", "file": "files/webinar5.pdf"},
+    {"title": "Вебинар 1: Введение", "video": "https://example.com/webinar2", "file": "https://drive.google.com/drive/folders/10Vsq0-CDwda_7zrC1z5A4Z6bH3PkmBoi?usp=sharing"},
+    {"title": "Вебинар 2: Промптинг", "video": "https://example.com/webinar2", "file": "https://drive.google.com/drive/folders/1j6zPFHcr82FRkgzUbrO8OdhjCXSSd0fn?usp=sharing"},
+    {"title": "Вебинар 3: Визуализация", "video": "https://example.com/webinar3", "file": "https://drive.google.com/drive/folders/1yOqabtMHYH_GrgjJtnS1n_k6oS8myee-?usp=sharing"},
+    {"title": "Вебинар 4: Автоматизация", "video": "https://example.com/webinar4", "file": "https://drive.google.com/drive/folders/140iQi5wHLp0GAIlOuTsI2OsSMa6YRR0A?usp=sharing"},
+    {"title": "Вебинар 5: Продвинутые техники", "video": "https://example.com/webinar5", "file": "fhttps://drive.google.com/drive/folders/1c_TSVegOYMnuaFSpb50xm26EOTvXi69R?usp=sharing"},
 ]
 
 # --- Кнопки ---
@@ -179,8 +179,7 @@ async def materials(callback: CallbackQuery):
 async def docs_module(callback: CallbackQuery):
     index = int(callback.data.split("_")[1])
     file = FSInputFile(MODULES[index]["file"])
-    #await callback.message.answer_document(file, caption=f"📂 Материалы для {MODULES[index]['title']}")
-    await callback.message.answer("Скоро здесь появятся материалы этого вебинара.")
+    await callback.message.answer_document(file, caption=f"📂 Материалы для {MODULES[index]['title']}")
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
     await callback.message.answer("Вернуться в главное меню:", reply_markup=kb.as_markup())
