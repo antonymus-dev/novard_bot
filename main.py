@@ -122,13 +122,14 @@ async def start_course(callback: CallbackQuery, state: FSMContext):
 async def open_module(callback: CallbackQuery, state: FSMContext):
     index = int(callback.data.split("_")[1])
     module = MODULES[index]
-    await callback.message.answer(
-        f"📚 Вы выбрали: {module['title']}\n🎥 Видеозапись: {module['video']}"
-    )
-    file = FSInputFile(module["file"])
-    await callback.message.answer_document(file, caption="📄 Домашнее задание")
-    await callback.message.answer("⬇️ Выберите действие:", reply_markup=module_actions_keyboard(index))
-    await state.set_state(CourseStates.in_module)
+    #await callback.message.answer(
+    #    f"📚 Вы выбрали: {module['title']}\n🎥 Видеозапись: {module['video']}"
+    #)
+    #file = FSInputFile(module["file"])
+    #await callback.message.answer_document(file, caption="📄 Домашнее задание")
+    #await callback.message.answer("⬇️ Выберите действие:", reply_markup=module_actions_keyboard(index))
+    #await state.set_state(CourseStates.in_module)
+    await callback.message.answer("Скоро здесь появится видеозапись вебинара.")
 
 @dp.callback_query(F.data.startswith("submit_hw_"))
 async def submit_homework(callback: CallbackQuery):
