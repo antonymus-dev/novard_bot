@@ -96,6 +96,7 @@ def modules_keyboard(prefix="module"):
         kb.button(text=m["title"], callback_data=f"{prefix}_{i}")
     kb.adjust(1)
     kb.button(text="⬅️ Назад", callback_data="go_back")
+    kb.adjust(1)
     return kb.as_markup()
 
 def module_actions_keyboard(index: int):
