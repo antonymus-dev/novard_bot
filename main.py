@@ -132,7 +132,9 @@ async def open_module(callback: CallbackQuery, state: FSMContext):
 
 @dp.callback_query(F.data.startswith("submit_hw_"))
 async def submit_homework(callback: CallbackQuery):
-    await callback.message.answer("Пожалуйста, отправьте домашнее задание в ответ на это сообщение (текст или файл).")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
+    await callback.message.answer("Пожалуйста, отправьте домашнее задание...", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data.startswith("complete_"))
 async def complete_module(callback: CallbackQuery):
@@ -140,7 +142,9 @@ async def complete_module(callback: CallbackQuery):
     index = int(callback.data.split("_")[1])
     cursor.execute(f"UPDATE progress SET m{index} = 1 WHERE user_id = ?", (user_id,))
     conn.commit()
-    await callback.message.answer("✅ Модуль отмечен как пройден!")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
+    await callback.message.answer("✅ Модуль отмечен как пройден!", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data == "my_progress")
 async def show_progress(callback: CallbackQuery):
@@ -150,7 +154,9 @@ async def show_progress(callback: CallbackQuery):
     progress = "\n".join(
         f"{'✅' if done else '❌'} {MODULES[i]['title']}" for i, done in enumerate(result)
     )
-    await callback.message.answer(f"🇺🇳 Ваш прогресс:\n{progress}")
+    kb = InlineKeyboardBuilder()
+    kb.button(text="⬅️ Назад", callback_data="go_back")
+    await callback.message.answer(f"🇺🇳 Ваш прогресс:\n{progress}", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data == "materials")
 async def materials(callback: CallbackQuery):
@@ -175,7 +181,10 @@ async def ask_question(callback: CallbackQuery):
 async def faq(callback: CallbackQuery):
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
-    await callback.message.answer("❓ Частые вопросы:\n1. Где материалы?\n2. Как получить сертификат?\n3. Куда писать вопросы?")
+    await callback.message.answer(
+    "❓ Частые вопросы:\n1. Где материалы?\n2. Как получить сертификат?\n3. Куда писать вопросы?",
+    reply_markup=kb.as_markup()
+)
 
 @dp.callback_query(F.data == "certificate")
 async def certificate(callback: CallbackQuery):
@@ -185,7 +194,9 @@ async def certificate(callback: CallbackQuery):
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
     if all(modules):
-        await callback.message.answer("📜 Поздравляем! Вы прошли курс. Мы отправим сертификат на вашу почту.")
+        await callback.message.answer(
+        "📜 Поздравляем! Вы прошли курс. Мы отправим сертификат на вашу почту."),
+        reply_markup=kb.as_markup()
     else:
         left = "\n".join(f"{MODULES[i]['title']}" for i, m in enumerate(modules) if not m)
         await callback.message.answer(f"❗ Чтобы получить сертификат, нужно пройти все модули.\nОсталось:\n{left}")
@@ -194,7 +205,7 @@ async def certificate(callback: CallbackQuery):
 async def feedback(callback: CallbackQuery, state: FSMContext):
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
-    await callback.message.answer("✍️ Напишите свой отзыв — одним сообщением.")
+    await callback.message.answer("✍️ Напишите свой отзыв — одним сообщением.", reply_markup=kb.as_markup())
     await state.set_state(CourseStates.writing_feedback)
 
 @dp.message(CourseStates.writing_feedback)
@@ -205,7 +216,7 @@ async def save_feedback(message: Message, state: FSMContext):
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ Назад", callback_data="go_back")
     await bot.send_message(ADMIN_ID, f"📩 Новый отзыв от @{message.from_user.username}:\n{message.text}")
-    await message.answer("Спасибо за ваш отзыв! ❤️")
+    await message.answer("Спасибо за ваш отзыв! ❤️", reply_markup=kb.as_markup())
     await state.clear()
 
 # ================== АДМИН-ПАНЕЛЬ ==================
