@@ -404,11 +404,20 @@ async def broadcast_send(message: Message, state: FSMContext):
 
 @dp.callback_query(F.data == "start_course_menu")
 async def open_main_menu(callback: CallbackQuery):
-    await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+    if callback.message.text:
+        # Если в сообщении есть текст — редактируем
+        await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+    else:
+        # Если это фото/файл — отправляем новое сообщение
+        await callback.message.answer("Выберите действие:", reply_markup=main_menu())
+
 
 @dp.callback_query(F.data == "go_back")
 async def go_back(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+    if callback.message.text:
+        await callback.message.edit_text("Выберите действие:", reply_markup=main_menu())
+    else:
+        await callback.message.answer("Выберите действие:", reply_markup=main_menu())
     
     
 
