@@ -150,11 +150,11 @@ async def open_module(callback: CallbackQuery, state: FSMContext):
         kb.button(text="✅ Пройден!", callback_data=f"complete_{index}")
         kb.button(text="⬅️ Назад", callback_data="go_back")
         await callback.message.answer(
-            f"📚 *{module['title']}*\n\n"
-            f"Ссылка на запись вебинара:\n{module['video']}\n\n"
-            f"После просмотра нажмите **Пройден!**, чтобы сохранить прогресс.",
-            reply_markup=kb.as_markup(),
-            parse_mode="Markdown"
+        f"📚 *{module['title']}*\n\n"
+        f"[Ссылка на запись вебинара]({module['video']})\n\n"
+        f"После просмотра нажмите **Пройден!**, чтобы сохранить прогресс.",
+        reply_markup=kb.as_markup(),
+        parse_mode="Markdown"
         )
     else:
         # Остальные модули пока без видео
