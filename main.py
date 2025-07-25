@@ -70,7 +70,7 @@ conn.commit()
 
 # --- Модули курса ---
 MODULES = [
-    {"title": "Вебинар 1: Введение", "video": "https://example.com/webinar1", "material_link": "https://drive.google.com/drive/folders/10Vsq0-CDwda_7zrC1z5A4Z6bH3PkmBoi?usp=sharing"},
+    {"title": "Вебинар 1: Введение", "video": "https://drive.google.com/file/d/1fZxgk0tYvaEwcSOV11I3JuVgfH7_hifK/view?usp=drive_link", "material_link": "https://drive.google.com/drive/folders/10Vsq0-CDwda_7zrC1z5A4Z6bH3PkmBoi?usp=sharing"},
     {"title": "Вебинар 2: Промптинг", "video": "https://example.com/webinar2", "material_link": "https://drive.google.com/drive/folders/1j6zPFHcr82FRkgzUbrO8OdhjCXSSd0fn?usp=sharing"},
     {"title": "Вебинар 3: Визуализация", "video": "https://example.com/webinar3", "material_link": "https://drive.google.com/drive/folders/1yOqabtMHYH_GrgjJtnS1n_k6oS8myee-?usp=sharing"},
     {"title": "Вебинар 4: Автоматизация", "video": "https://example.com/webinar4", "material_link": "https://drive.google.com/drive/folders/140iQi5wHLp0GAIlOuTsI2OsSMa6YRR0A?usp=sharing"},
@@ -144,16 +144,23 @@ async def start_course(callback: CallbackQuery, state: FSMContext):
 async def open_module(callback: CallbackQuery, state: FSMContext):
     index = int(callback.data.split("_")[1])
     module = MODULES[index]
-    #await callback.message.answer(
-    #    f"📚 Вы выбрали: {module['title']}\n🎥 Видеозапись: {module['video']}"
-    #)
-    #file = FSInputFile(module["file"])
-    #await callback.message.answer_document(file, caption="📄 Домашнее задание")
-    #await callback.message.answer("⬇️ Выберите действие:", reply_markup=module_actions_keyboard(index))
-    #await state.set_state(CourseStates.in_module)
-    kb = InlineKeyboardBuilder()
-    kb.button(text="⬅️ Назад", callback_data="go_back")
-    await callback.message.answer("Скоро здесь появится видеозапись вебинара.", reply_markup=kb.as_markup())
+
+    if index == 0:  # Для первого вебинара — ссылка на видео
+        kb = InlineKeyboardBuilder()
+        kb.button(text="✅ Пройден!", callback_data=f"complete_{index}")
+        kb.button(text="⬅️ Назад", callback_data="go_back")
+        await callback.message.answer(
+            f"📚 *{module['title']}*\n\n"
+            f"Ссылка на запись вебинара:\n{module['video']}\n\n"
+            f"После просмотра нажмите **Пройден!**, чтобы сохранить прогресс.",
+            reply_markup=kb.as_markup(),
+            parse_mode="Markdown"
+        )
+    else:
+        # Остальные модули пока без видео
+        kb = InlineKeyboardBuilder()
+        kb.button(text="⬅️ Назад", callback_data="go_back")
+        await callback.message.answer("Скоро здесь появится видеозапись вебинара.", reply_markup=kb.as_markup())
 
 @dp.callback_query(F.data.startswith("submit_hw_"))
 async def submit_homework(callback: CallbackQuery):
