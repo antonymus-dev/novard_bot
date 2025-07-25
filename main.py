@@ -70,7 +70,7 @@ conn.commit()
 
 # --- Модули курса ---
 MODULES = [
-    {"title": "Вебинар 1: Введение", "video": "https://drive.google.com/file/d/1fZxgk0tYvaEwcSOV11I3JuVgfH7_hifK/view?usp=drive_link", "material_link": "https://drive.google.com/drive/folders/10Vsq0-CDwda_7zrC1z5A4Z6bH3PkmBoi?usp=sharing"},
+    {"title": "Вебинар 1: Введение", "video": "https://drive.google.com/drive/folders/1VgnkHmhtCv5mD_Qu9fvuNFBhcmTWSlpk?usp=drive_link", "material_link": "https://drive.google.com/drive/folders/10Vsq0-CDwda_7zrC1z5A4Z6bH3PkmBoi?usp=sharing"},
     {"title": "Вебинар 2: Промптинг", "video": "https://example.com/webinar2", "material_link": "https://drive.google.com/drive/folders/1j6zPFHcr82FRkgzUbrO8OdhjCXSSd0fn?usp=sharing"},
     {"title": "Вебинар 3: Визуализация", "video": "https://example.com/webinar3", "material_link": "https://drive.google.com/drive/folders/1yOqabtMHYH_GrgjJtnS1n_k6oS8myee-?usp=sharing"},
     {"title": "Вебинар 4: Автоматизация", "video": "https://example.com/webinar4", "material_link": "https://drive.google.com/drive/folders/140iQi5wHLp0GAIlOuTsI2OsSMa6YRR0A?usp=sharing"},
